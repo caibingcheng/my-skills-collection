@@ -7,13 +7,13 @@
 Clone the repository to a regular location on your system, for example:
 
 ```bash
-git clone https://github.com/caibingcheng/my-skills-collection.git ~/projects/my-skills-collection
+git clone https://github.com/caibingcheng/my-skills-collection.git ~/.my-skills-collection
 ```
 
 Or update an existing local clone:
 
 ```bash
-cd ~/projects/my-skills-collection
+cd ~/.my-skills-collection
 git pull origin master
 ```
 

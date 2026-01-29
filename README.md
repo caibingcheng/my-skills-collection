@@ -8,3 +8,7 @@ https://raw.githubusercontent.com/caibingcheng/my-skills-collection/refs/heads/m
 ```
 
 For human users, refer to the [INSTALLATION.md](INSTALLATION.md) file for detailed instructions.
+
+---
+
+This repository can be a template for creating your own skills collection repository.
