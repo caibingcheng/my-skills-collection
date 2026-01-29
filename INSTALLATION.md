@@ -1,6 +1,6 @@
 ## Structure
 
-- `skills/`: Contains various skills that can be used by AI agents.
+- `skills/`: Contains various global skills that can be used by AI agents.
 
 ## Skills Installation
 
