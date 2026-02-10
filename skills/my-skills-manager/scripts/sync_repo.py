@@ -27,7 +27,16 @@ def main():
     except subprocess.CalledProcessError:
         print('No changes to commit (or commit failed). Continuing...')
 
-    run(['git', '-C', repo_root, 'pull', 'origin', 'main'])
+    # Try pulling from the common default branch names (main, then master).
+    try:
+        run(['git', '-C', repo_root, 'pull', 'origin', 'main'])
+    except subprocess.CalledProcessError:
+        print('Failed to pull origin/main, trying origin/master...')
+        try:
+            run(['git', '-C', repo_root, 'pull', 'origin', 'master'])
+        except subprocess.CalledProcessError:
+            print('Failed to pull from origin/main and origin/master. Please check remote branches.')
+            sys.exit(1)
     run(['git', '-C', repo_root, 'submodule', 'update', '--remote', '--merge'])
 
     print('Sync complete. Review changes and resolve conflicts if any.')
