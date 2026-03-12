@@ -47,6 +47,7 @@ python skills/my-skills-manager/scripts/sync_repo.py
 - `reference/add-skills.md` — 添加 skill 的详细步骤
 - `reference/remove-skills.md` — 删除 skill 的详细步骤
 - `reference/sync-skills.md` — 同步仓库的详细步骤
+- `reference/INSTALLATION.md` — 安装技能到 AI agent 的详细步骤
 
 ## 脚本（已包含）
 
