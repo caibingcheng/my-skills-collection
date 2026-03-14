@@ -1,45 +1,97 @@
 #!/usr/bin/env python3
-"""Sync the my-skills-collection repository and update submodules safely.
+"""Sync the my-skills-collection repository and update submodules.
 
 Usage:
-  python sync_repo.py
+  python sync_repo.py [--repo-root PATH]
 """
+import argparse
 import os
 import subprocess
 import sys
 
 
-def run(cmd):
+def run(cmd, cwd=None, check=True):
+    """Run a command and return result."""
     print('>>>', ' '.join(cmd))
-    subprocess.check_call(cmd)
+    result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
+    if check and result.returncode != 0:
+        print(f'Error: {result.stderr.strip()}')
+        return None
+    return result
+
+
+def get_current_branch(repo_root):
+    """Get the current git branch name."""
+    result = run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], cwd=repo_root, check=False)
+    if result and result.returncode == 0:
+        return result.stdout.strip()
+    return None
+
+
+def has_changes(repo_root):
+    """Check if there are uncommitted changes."""
+    result = run(['git', 'status', '--porcelain'], cwd=repo_root, check=False)
+    return result and result.stdout.strip() != ''
 
 
 def main():
-    repo_root = os.path.expanduser('~/.my-skills-collection')
+    p = argparse.ArgumentParser(description='Sync skills repository')
+    p.add_argument('--repo-root', 
+                   default=os.path.expanduser('~/.my-skills-collection'),
+                   help='Path to skills repository')
+    args = p.parse_args()
+    
+    repo_root = os.path.expanduser(args.repo_root)
+    
     if not os.path.exists(repo_root):
-        print('Repository not found:', repo_root)
+        print(f'Error: Repository not found: {repo_root}')
+        print('Clone it first:')
+        print('  git clone https://github.com/caibingcheng/my-skills-collection.git ~/.my-skills-collection')
         sys.exit(1)
-
-    # Ensure working tree is clean
-    run(['git', '-C', repo_root, 'add', '.'])
-    try:
-        run(['git', '-C', repo_root, 'commit', '-m', 'Save current changes before sync'])
-    except subprocess.CalledProcessError:
-        print('No changes to commit (or commit failed). Continuing...')
-
-    # Try pulling from the common default branch names (main, then master).
-    try:
-        run(['git', '-C', repo_root, 'pull', 'origin', 'main'])
-    except subprocess.CalledProcessError:
-        print('Failed to pull origin/main, trying origin/master...')
-        try:
-            run(['git', '-C', repo_root, 'pull', 'origin', 'master'])
-        except subprocess.CalledProcessError:
-            print('Failed to pull from origin/main and origin/master. Please check remote branches.')
-            sys.exit(1)
-    run(['git', '-C', repo_root, 'submodule', 'update', '--remote', '--merge'])
-
-    print('Sync complete. Review changes and resolve conflicts if any.')
+    
+    branch = get_current_branch(repo_root)
+    if not branch:
+        print('Error: Not a git repository or detached HEAD')
+        sys.exit(1)
+    
+    print(f'Repository: {repo_root}')
+    print(f'Branch: {branch}')
+    print()
+    
+    # Commit any local changes
+    if has_changes(repo_root):
+        print('Saving local changes...')
+        run(['git', 'add', '.'], cwd=repo_root)
+        result = run(['git', 'commit', '-m', 'Save changes before sync'], 
+                     cwd=repo_root, check=False)
+        if not result or result.returncode != 0:
+            print('No changes to commit or commit failed.')
+    
+    # Pull from remote
+    print(f'\nPulling from origin/{branch}...')
+    result = run(['git', 'pull', 'origin', branch], cwd=repo_root, check=False)
+    if not result or result.returncode != 0:
+        # Try alternative branch names
+        for alt_branch in ['main', 'master']:
+            if alt_branch != branch:
+                print(f'Trying origin/{alt_branch}...')
+                result = run(['git', 'pull', 'origin', alt_branch], cwd=repo_root, check=False)
+                if result and result.returncode == 0:
+                    break
+        else:
+            print('Warning: Pull failed. Check your connection or resolve conflicts.')
+    
+    # Update submodules
+    print('\nUpdating submodules...')
+    result = run(['git', 'submodule', 'update', '--remote', '--merge'], 
+                 cwd=repo_root, check=False)
+    if result and result.returncode == 0:
+        print('Submodules updated.')
+    else:
+        print('Warning: Submodule update had issues.')
+    
+    print('\n✓ Sync complete.')
+    print('Review changes and run "git push" if needed.')
 
 
 if __name__ == '__main__':
