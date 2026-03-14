@@ -56,6 +56,16 @@ Here are some examples:
 
 If the `skills/` directory does not exist, create it first.
 
+## Git Hooks Setup (Recommended)
+
+After cloning, run the init script to set up git hooks:
+
+```bash
+~/.my-skills-collection/scripts/init-hooks.sh
+```
+
+This will install a pre-commit hook that prevents circular symlinks from being committed.
+
 ### Note
 
 - DO NOT hard link the entire `skills/` directory, only the individual skill directories inside it.
