@@ -7,3 +7,6 @@ __pycache__/
 
 # Skill package files
 *.skill
+
+# Skill evaluation workspaces (output of skill-creator)
+*-workspace/
