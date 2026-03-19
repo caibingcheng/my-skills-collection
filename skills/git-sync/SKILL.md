@@ -1,6 +1,6 @@
 ---
-name: git-sync-skill
-description: Automate git workflow with intelligent commit message generation and email consistency verification. Use when syncing code changes with git, creating commits, or pushing to remote repositories. Triggers on phrases like 'sync my changes', 'commit and push', 'git sync', 'sync to remote', or any git workflow automation needs.
+name: git-sync
+description: USE WHEN syncing code changes with git, creating commits with intelligent messages, pushing to remote repositories, or automating git workflows. Triggers on 'sync my changes', 'commit and push', 'git sync', 'sync to remote'.
 ---
 
 # Git Sync Skill
