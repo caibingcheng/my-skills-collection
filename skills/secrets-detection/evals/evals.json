@@ -1,0 +1,23 @@
+{
+  "skill_name": "secrets-detection",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "扫描当前代码库中的敏感信息",
+      "expected_output": "运行secrets_scanner.py脚本，检测敏感文件、关键词、密钥格式等，生成报告",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "检查这个项目中是否有API密钥泄露",
+      "expected_output": "使用skill检测API密钥相关的敏感信息，包括api_key, secret_key等关键词和密钥格式",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "帮我检查.gitignore是否正确配置了敏感文件",
+      "expected_output": "检查.gitignore中是否包含.env, *.pem, *.key等敏感文件模式，提供修复建议",
+      "files": []
+    }
+  ]
+}
